@@ -6,7 +6,7 @@
 # - Andreas Kurth <akurth@iis.ee.ethz.ch>
 
 if test -z ${HERO_ROOT+x}; then
-  readonly HERO_ROOT="$(readlink -f "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../..")"
+  readonly HERO_ROOT="$(readlink -f "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")/../..")"
 fi
 
 say() {

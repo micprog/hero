@@ -2,7 +2,7 @@
 
 set -e
 
-ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")/.." && pwd)
 
 if [ -z "${RISCV}" ]
 then

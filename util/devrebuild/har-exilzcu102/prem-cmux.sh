@@ -5,7 +5,7 @@
 # Authors:
 # - Andreas Kurth <akurth@iis.ee.ethz.ch>
 
-source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../common.sh"
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")/../common.sh"
 
 if test "$($HERO_ROOT/util/configfile/get_value -s $HERO_ROOT/local.cfg BR2_PACKAGE_PREM_CMUX)" != "y";
     then

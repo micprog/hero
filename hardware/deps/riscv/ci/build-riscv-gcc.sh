@@ -3,7 +3,7 @@
 set -o pipefail
 set -e
 
-ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")/.." && pwd)
 VERSION="a03290eab661e2aa58288ad164f908bbbcc2169c"
 
 mkdir -p $RISCV

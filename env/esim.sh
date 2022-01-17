@@ -1,4 +1,4 @@
-THIS_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+THIS_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")
 
 # FIXME: this should not be based on the genesys2 execution environment
 source ${THIS_DIR}/ediggenesys2.sh

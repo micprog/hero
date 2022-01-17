@@ -1,4 +1,4 @@
-THIS_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+THIS_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")
 
 if [[ -z "${HERO_INSTALL}" ]]; then
     echo "Error: HERO_INSTALL variable is not set (set it to toolchain installation path)"

@@ -5,7 +5,7 @@
 # Authors:
 # - Andreas Kurth <akurth@iis.ee.ethz.ch>
 
-source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../common.sh"
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")/../common.sh"
 
 cd "$HERO_ROOT/output/$BR_OUTPUT_SUBDIR"
 

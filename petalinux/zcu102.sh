@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-readonly THIS_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+readonly THIS_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")
 readonly HERO_ROOT="$(readlink -f "$THIS_DIR/..")"
 readonly LOCAL_CFG="$HERO_ROOT/local.cfg"
 

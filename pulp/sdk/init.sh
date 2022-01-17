@@ -14,7 +14,7 @@ add_PYTHONPATH() {
     export PYTHONPATH="$1${PYTHONPATH:+":$PYTHONPATH"}"
 }
 
-scriptDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+scriptDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")"
 
 export PULP_PROJECT_HOME="$scriptDir"
 echo "Configuring Pulp project at $PULP_PROJECT_HOME"

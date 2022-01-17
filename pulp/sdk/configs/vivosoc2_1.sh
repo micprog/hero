@@ -1,6 +1,6 @@
 #!/bin/bash
 
-scriptDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+scriptDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")"
 
 export PULP_CURRENT_CONFIG=vivosoc2_1@config_file=${scriptDir}/json/vivosoc2_1.json
 

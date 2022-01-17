@@ -10,4 +10,4 @@
 set -euo pipefail
 
 readonly BR_OUTPUT_SUBDIR="br-har-exilzcu102"
-source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/libpulp.sh"
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")/libpulp.sh"

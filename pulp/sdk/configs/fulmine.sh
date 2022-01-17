@@ -1,6 +1,6 @@
 #!/bin/bash
 
-scriptDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+scriptDir="$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")"
 
 export PULP_CURRENT_CONFIG=fulmine@config_file=${scriptDir}/json/fulmine.json
 

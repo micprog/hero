@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]:-${(%):-%x}}" )" && pwd )"
 
 gen_sh() {
 	`cat $DIR/$1  | sed "s#PULP_SDK_HOME=.*#PULP_SDK_HOME=${DIR}#g" > $DIR/$1.new`
