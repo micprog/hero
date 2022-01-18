@@ -70,8 +70,8 @@ module pulp_tb #(
   axi_lite_resp_t rab_conf_resp;
 
   clk_rst_gen #(
-    .CLK_PERIOD     (CLK_PERIOD),
-    .RST_CLK_CYCLES (10)
+    .ClkPeriod    (CLK_PERIOD),
+    .RstClkCycles (10)
   ) i_clk_gen (
     .clk_o  (clk),
     .rst_no (rst_n)

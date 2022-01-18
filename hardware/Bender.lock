@@ -83,8 +83,8 @@ packages:
       - common_verification
       - tech_cells_generic
   common_verification:
-    revision: 122a733f21027ce1098ebcc0e2a121e63d315b4d
-    version: ~
+    revision: b616c1a25aea3b76e32dcbed2ec87d057efdcffd
+    version: 0.2.1
     source:
       Git: "https://github.com/pulp-platform/common_verification.git"
     dependencies: []
