@@ -11,37 +11,12 @@
 //
 // Fabian Schuiki <fschuiki@iis.ee.ethz.ch>
 
-module graycode_tb #(
-    parameter int N = 9
+/// A binary to gray code converter.
+module binary_to_gray #(
+    parameter int N = -1
+)(
+    input  logic [N-1:0] A,
+    output logic [N-1:0] Z
 );
-
-    logic [N-1:0] a, b, c, bp = '0;
-
-    binary_to_gray #(N) dut_ab (a,b);
-    gray_to_binary #(N) dut_bc (b,c);
-
-    task check;
-        assert(a == c);
-        assert($signed($countones(b) - $countones(bp)) inside {-1,0,1});
-        bp = b;
-    endtask
-
-    initial begin : p_stim
-        logic [N:0] i;
-
-        // Count up twice, including overflow.
-        repeat(2) for (i = 0; i < 2**N; i++) begin
-            a = i;
-            #1;
-            check();
-        end
-
-        // Count backwards.
-        for (i = 0; i < 2**N; i++) begin
-            a = N-i-1;
-            #1;
-            check();
-        end
-    end
-
+    assign Z = A ^ (A >> 1);
 endmodule

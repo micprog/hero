@@ -49,8 +49,8 @@ module rr_arb_tree_tb #(
 
   // clock and rst gen
   clk_rst_gen #(
-    .CLK_PERIOD     ( CyclTime ),
-    .RST_CLK_CYCLES ( 5        )
+    .ClkPeriod    ( CyclTime ),
+    .RstClkCycles ( 5        )
   ) i_clk_rst_gen (
     .clk_o  ( clk   ),
     .rst_no ( rst_n )
@@ -211,7 +211,7 @@ module rr_arb_tree_tb #(
           error       = throughput - exp_through;
           if (FairArb && LockIn) begin
             assert(error < error_threshold && error > -error_threshold) else
-                $warning("Line: %0d is unfair!");
+                $warning("Line: %0d is unfair!", i);
           end
           $display("Line: %0d, TotActice: %0d Throughput: %0f Ideal: %0f Diff: %0f",
               i, j, throughput, exp_through, error);        end

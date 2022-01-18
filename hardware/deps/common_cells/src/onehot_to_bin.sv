@@ -29,4 +29,10 @@ module onehot_to_bin #(
         assign bin[j] = |(tmp_mask & onehot);
     end
 
+// pragma translate_off
+`ifndef VERILATOR
+    assert final ($onehot0(onehot)) else
+        $fatal(1, "[onehot_to_bin] More than two bit set in the one-hot signal");
+`endif
+// pragma translate_on
 endmodule

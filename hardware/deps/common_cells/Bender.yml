@@ -11,8 +11,8 @@ package:
     - "Thomas Benz <tbenz@iis.ee.ethz.ch>"
 
 dependencies:
-  common_verification: { git: "https://github.com/pulp-platform/common_verification.git", version: 0.1.1 }
-  tech_cells_generic: { git: "https://github.com/pulp-platform/tech_cells_generic.git", version: 0.1.1 }
+  common_verification: { git: "https://github.com/pulp-platform/common_verification.git", version: 0.2.0 }
+  tech_cells_generic: { git: "https://github.com/pulp-platform/tech_cells_generic.git", version: 0.2.3 }
 
 export_include_dirs:
   - include
@@ -22,6 +22,9 @@ sources:
   # Files in level 1 only depend on files in level 0, files in level 2 on files in levels 1 and 0,
   # etc. Files within a level are ordered alphabetically.
   # Level 0
+  - src/binary_to_gray.sv
+  - src/cb_filter_pkg.sv
+  - src/cc_onehot.sv
   - src/cdc_2phase.sv
   - src/cf_math_pkg.sv
   - src/clk_div.sv
@@ -30,7 +33,8 @@ sources:
   - src/edge_propagator_tx.sv
   - src/exp_backoff.sv
   - src/fifo_v3.sv
-  - src/graycode.sv
+  - src/gray_to_binary.sv
+  - src/isochronous_4phase_handshake.sv
   - src/isochronous_spill_register.sv
   - src/lfsr.sv
   - src/lfsr_16bit.sv
@@ -40,10 +44,11 @@ sources:
   - src/plru_tree.sv
   - src/popcount.sv
   - src/rr_arb_tree.sv
+  - src/rr_distributor.sv
   - src/rstgen_bypass.sv
   - src/serial_deglitch.sv
   - src/shift_reg.sv
-  - src/spill_register.sv
+  - src/spill_register_flushable.sv
   - src/stream_demux.sv
   - src/stream_filter.sv
   - src/stream_fork.sv
@@ -54,12 +59,10 @@ sources:
   - src/sync.sv
   - src/sync_wedge.sv
   - src/unread.sv
-  - src/rr_distributor.sv
   # Level 1
   - src/addr_decode.sv
   - src/cb_filter.sv
   - src/cdc_fifo_2phase.sv
-  - src/cdc_fifo_gray.sv
   - src/counter.sv
   - src/ecc_decode.sv
   - src/ecc_encode.sv
@@ -67,18 +70,25 @@ sources:
   - src/lzc.sv
   - src/max_counter.sv
   - src/rstgen.sv
+  - src/spill_register.sv
   - src/stream_delay.sv
   - src/stream_fifo.sv
   - src/stream_fork_dynamic.sv
-  - src/stream_xbar.sv
   # Level 2
+  - src/cdc_fifo_gray.sv
   - src/fall_through_register.sv
   - src/id_queue.sv
   - src/stream_to_mem.sv
   - src/stream_arbiter_flushable.sv
   - src/stream_register.sv
+  - src/stream_xbar.sv
   # Level 3
   - src/stream_arbiter.sv
+  - src/stream_omega_net.sv
+
+  - target: simulation
+    files:
+      - src/deprecated/sram.sv
 
   - target: test
     files:
@@ -95,10 +105,11 @@ sources:
       - test/stream_test.sv
       - test/stream_register_tb.sv
       - test/stream_to_mem_tb.sv
-      - test/stream_xbar_tb.sv
       - test/sub_per_hash_tb.sv
       # Level 1
-      - test/isochronous_spill_register_tb.sv
+      - test/isochronous_crossing_tb.sv
+      - test/stream_omega_net_tb.sv
+      - test/stream_xbar_tb.sv
 
   - target: synth_test
     files:

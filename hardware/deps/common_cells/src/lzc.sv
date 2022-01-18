@@ -1,12 +1,16 @@
 // Copyright (c) 2018 - 2019 ETH Zurich, University of Bologna
-// Copyright and related rights are licensed under the Solderpad Hardware
-// License, Version 0.51 (the "License"); you may not use this file except in
-// compliance with the License.  You may obtain a copy of the License at
-// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
-// or agreed to in writing, software, hardware and materials distributed under
-// this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the
-// specific language governing permissions and limitations under the License.
+// All rights reserved.
+//
+// This code is under development and not yet released to the public.
+// Until it is released, the code is under the copyright of ETH Zurich and
+// the University of Bologna, and may contain confidential and/or unpublished
+// work. Any reuse/redistribution is strictly forbidden without written
+// permission from ETH Zurich.
+//
+// Bug fixes and contributions will eventually be released under the
+// SolderPad open hardware license in the context of the PULP platform
+// (http://www.pulp-platform.org), under the copyright of ETH Zurich and the
+// University of Bologna.
 
 /// A trailing zero counter / leading zero counter.
 /// Set MODE to 0 for trailing zero counter => cnt_o is the number of trailing zeros (from the LSB)
@@ -36,14 +40,14 @@ module lzc #(
   output logic                 empty_o
 );
 
-  if (WIDTH == 1) begin: gen_degenerate_lzc
+  if (WIDTH == 1) begin : gen_degenerate_lzc
 
     assign cnt_o[0] = !in_i[0];
-    assign empty_o  = !in_i[0];
+    assign empty_o = !in_i[0];
 
-  end else begin: gen_lzc
+  end else begin : gen_lzc
 
-    localparam int unsigned NUM_LEVELS = $clog2(WIDTH);
+    localparam int unsigned NumLevels = $clog2(WIDTH);
 
     // pragma translate_off
     initial begin
@@ -51,9 +55,9 @@ module lzc #(
     end
     // pragma translate_on
 
-    logic [WIDTH-1:0][NUM_LEVELS-1:0]          index_lut;
-    logic [2**NUM_LEVELS-1:0]                  sel_nodes;
-    logic [2**NUM_LEVELS-1:0][NUM_LEVELS-1:0]  index_nodes;
+    logic [WIDTH-1:0][NumLevels-1:0] index_lut;
+    logic [2**NumLevels-1:0] sel_nodes;
+    logic [2**NumLevels-1:0][NumLevels-1:0] index_nodes;
 
     logic [WIDTH-1:0] in_tmp;
 
@@ -65,40 +69,43 @@ module lzc #(
     end
 
     for (genvar j = 0; unsigned'(j) < WIDTH; j++) begin : g_index_lut
-      assign index_lut[j] = (NUM_LEVELS)'(unsigned'(j));
+      assign index_lut[j] = (NumLevels)'(unsigned'(j));
     end
 
-    for (genvar level = 0; unsigned'(level) < NUM_LEVELS; level++) begin : g_levels
-      if (unsigned'(level) == NUM_LEVELS-1) begin : g_last_level
-        for (genvar k = 0; k < 2**level; k++) begin : g_level
+    for (genvar level = 0; unsigned'(level) < NumLevels; level++) begin : g_levels
+      if (unsigned'(level) == NumLevels - 1) begin : g_last_level
+        for (genvar k = 0; k < 2 ** level; k++) begin : g_level
           // if two successive indices are still in the vector...
-          if (unsigned'(k) * 2 < WIDTH-1) begin
-            assign sel_nodes[2**level-1+k]   = in_tmp[k*2] | in_tmp[k*2+1];
-            assign index_nodes[2**level-1+k] = (in_tmp[k*2] == 1'b1) ? index_lut[k*2] :
-                                                                       index_lut[k*2+1];
+          if (unsigned'(k) * 2 < WIDTH - 1) begin : g_reduce
+            assign sel_nodes[2 ** level - 1 + k] = in_tmp[k * 2] | in_tmp[k * 2 + 1];
+            assign index_nodes[2 ** level - 1 + k] = (in_tmp[k * 2] == 1'b1)
+              ? index_lut[k * 2] :
+                index_lut[k * 2 + 1];
           end
           // if only the first index is still in the vector...
-          if (unsigned'(k) * 2 == WIDTH-1) begin
-            assign sel_nodes[2**level-1+k]   = in_tmp[k*2];
-            assign index_nodes[2**level-1+k] = index_lut[k*2];
+          if (unsigned'(k) * 2 == WIDTH - 1) begin : g_base
+            assign sel_nodes[2 ** level - 1 + k] = in_tmp[k * 2];
+            assign index_nodes[2 ** level - 1 + k] = index_lut[k * 2];
           end
           // if index is out of range
-          if (unsigned'(k) * 2 > WIDTH-1) begin
-            assign sel_nodes[2**level-1+k]   = 1'b0;
-            assign index_nodes[2**level-1+k] = '0;
+          if (unsigned'(k) * 2 > WIDTH - 1) begin : g_out_of_range
+            assign sel_nodes[2 ** level - 1 + k] = 1'b0;
+            assign index_nodes[2 ** level - 1 + k] = '0;
           end
         end
-      end else begin
-        for (genvar l = 0; l < 2**level; l++) begin : g_level
-          assign sel_nodes[2**level-1+l]   = sel_nodes[2**(level+1)-1+l*2] | sel_nodes[2**(level+1)-1+l*2+1];
-          assign index_nodes[2**level-1+l] = (sel_nodes[2**(level+1)-1+l*2] == 1'b1) ? index_nodes[2**(level+1)-1+l*2] :
-                                                                                       index_nodes[2**(level+1)-1+l*2+1];
+      end else begin : g_not_last_level
+        for (genvar l = 0; l < 2 ** level; l++) begin : g_level
+          assign sel_nodes[2 ** level - 1 + l] =
+              sel_nodes[2 ** (level + 1) - 1 + l * 2] | sel_nodes[2 ** (level + 1) - 1 + l * 2 + 1];
+          assign index_nodes[2 ** level - 1 + l] = (sel_nodes[2 ** (level + 1) - 1 + l * 2] == 1'b1)
+            ? index_nodes[2 ** (level + 1) - 1 + l * 2] :
+              index_nodes[2 ** (level + 1) - 1 + l * 2 + 1];
         end
       end
     end
 
-    assign cnt_o   = NUM_LEVELS > unsigned'(0) ? index_nodes[0] : {($clog2(WIDTH)){1'b0}};
-    assign empty_o = NUM_LEVELS > unsigned'(0) ? ~sel_nodes[0]  : ~(|in_i);
+    assign cnt_o = NumLevels > unsigned'(0) ? index_nodes[0] : {($clog2(WIDTH)) {1'b0}};
+    assign empty_o = NumLevels > unsigned'(0) ? ~sel_nodes[0] : ~(|in_i);
 
   end : gen_lzc
 
