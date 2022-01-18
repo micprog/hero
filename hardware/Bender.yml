@@ -10,6 +10,7 @@ dependencies:
   axi_slice_dc: { git: "https://github.com/pulp-platform/axi_slice_dc.git", rev: atomics }
   common_verification: { git: "https://github.com/pulp-platform/common_verification.git", rev: release-0.2 }
   pulp_cluster: { git: "https://github.com/pulp-platform/pulp_cluster.git", rev: atomics }
+  common_cells: { git: "https://github.com/pulp-platform/common_cells.git", version: 1.19.0 }
 
 workspace:
   checkout_dir: "./deps"
