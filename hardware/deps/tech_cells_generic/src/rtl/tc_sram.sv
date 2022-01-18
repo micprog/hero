@@ -124,6 +124,11 @@ module tc_sram #(
   // write memory array
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
+      if (SimInit != "none") begin
+        for (int unsigned i = 0; i < NumWords; i++) begin
+          sram[i] <= init_val[i];
+        end
+      end
       for (int i = 0; i < NumPorts; i++) begin
         r_addr_q[i] <= {AddrWidth{1'b0}};
         // initialize the read output register for each port
@@ -164,7 +169,7 @@ module tc_sram #(
 // Validate parameters.
 // pragma translate_off
 `ifndef VERILATOR
-`ifndef TARGET_SYNTHESYS
+`ifndef TARGET_SYNTHESIS
   initial begin: p_assertions
     assert ($bits(addr_i)  == NumPorts * AddrWidth) else $fatal(1, "AddrWidth problem on `addr_i`");
     assert ($bits(wdata_i) == NumPorts * DataWidth) else $fatal(1, "DataWidth problem on `wdata_i`");
