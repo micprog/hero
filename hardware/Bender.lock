@@ -62,11 +62,12 @@ packages:
       - axi
       - axi_slice
   cluster_interconnect:
-    revision: e3172c42789b13556dff798e5c8f640e66cc3052
+    revision: 49581f12e61941ca93e063ceb89514a2d932854a
     version: ~
     source:
       Git: "https://github.com/pulp-platform/cluster_interconnect.git"
-    dependencies: []
+    dependencies:
+      - common_cells
   cluster_peripherals:
     revision: 56206bf50bf5c1150b14cb958ea4eed716d21278
     version: ~
