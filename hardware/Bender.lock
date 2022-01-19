@@ -95,6 +95,13 @@ packages:
     source:
       Git: "https://github.com/pulp-platform/event_unit_flex.git"
     dependencies: []
+  fpu_div_sqrt_mvp:
+    revision: 86e1f558b3c95e91577c41b2fc452c86b04e85ac
+    version: 1.0.4
+    source:
+      Git: "https://github.com/pulp-platform/fpu_div_sqrt_mvp.git"
+    dependencies:
+      - common_cells
   icache-intc:
     revision: 42aee659c80b682ceb7a74ec3f8fd9ba054fea59
     version: 1.0.0
@@ -173,10 +180,3 @@ packages:
     dependencies:
       - common_cells
       - fpu_div_sqrt_mvp
-  fpu_div_sqrt_mvp:
-    revision: 83a601f97934ed5e06d737b9c80d98b08867c5fa
-    version: ~
-    source:
-      Git: "https://github.com/pulp-platform/fpu_div_sqrt_mvp.git"
-    dependencies:
-      - common_cells
