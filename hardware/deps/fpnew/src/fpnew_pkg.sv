@@ -89,6 +89,14 @@ package fpnew_pkg;
       INT16: return 16;
       INT32: return 32;
       INT64: return 64;
+      default: begin
+        // pragma translate_off
+        $fatal(1, "Invalid INT format supplied");
+        // pragma translate_on
+        // just return any integer to avoid any latches
+        // hopefully this error is caught by simulation
+        return INT8;
+      end
     endcase
   endfunction
 
@@ -468,6 +476,17 @@ package fpnew_pkg;
       if (cfg[i] && types[i] == MERGED)
         return fp_format_e'(i);
       return fp_format_e'(0);
+  endfunction
+
+  // Returns the largest number of regs that is active and is set as MERGED
+  function automatic int unsigned get_num_regs_multi(fmt_unsigned_t regs,
+                                                     fmt_unit_types_t types,
+                                                     fmt_logic_t cfg);
+    automatic int unsigned res = 0;
+    for (int unsigned i = 0; i < NUM_FP_FORMATS; i++) begin
+      if (cfg[i] && types[i] == MERGED) res = maximum(res, regs[i]);
+    end
+    return res;
   endfunction
 
 endpackage

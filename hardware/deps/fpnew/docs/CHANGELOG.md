@@ -15,10 +15,48 @@ Versions of the IP in the same major relase are "pin-compatible" with each other
 ### Fixed
 
 
+## [0.6.6] - 2021-04-19
+
+### Changed
+- [common_cells] Bump common cells version
+
+## [0.6.5] - 2020-11-06
+
+### Fixed
+- [common_cells] Bump to fix compilation order
+
+## [0.6.4] - 2020-10-05
+
+### Fixed
+- Updated dependencies for Bender and IPApproX [(#37)](https://github.com/pulp-platform/fpnew/issues/37)
+- [fpu_div_sqrt_mvp] Bump for formal version number
+
+
+## [0.6.3] - 2020-10-02
+
+### Fixed
+- Fix undriven signals for inactive case in `fpnew_fma_multi`
+- Fix potentially uncovered case item in `fpnew_pkg`
+- Undriven unused portions of signals in multi-format slices
+- Undriven portions of the result for non-divisible unit width & format width in multi-format slices
+- [fpu_div_sqrt_mvp] Bumped to fix signalling for underflows
+
+
+## [0.6.2] - 2020-06-02
+
+### Changed
+- Number of pipeline registers in multi-format units is the maximum of all contained formats instead of the first format marked `MERGED`
+
+### Fixed
+- Typo in changelog
+- Missing type cast breaking simulation in VCS [(#24)](https://github.com/pulp-platform/fpnew/issues/24)
+
+
 ## [0.6.1] - 2019-07-10
 
 ### Fixed
 - A bug where the div/sqrt unit could lose operations in flight
+
 
 ## [0.6.0] - 2019-07-04
 
@@ -34,7 +72,7 @@ Versions of the IP in the same major relase are "pin-compatible" with each other
 - Various linter warnings
 - Documentation to reflect on updated pipeline distribution order
 - [fpu_div_sqrt_mvp] Bumped to fix linter warnings
-- [Bender] Fixed dependencies for Bender [(#14)](https://github.com/pulp-platform/fpnew/pull/15)
+- [Bender] Fixed dependencies for Bender [(#15)](https://github.com/pulp-platform/fpnew/pull/15)
 
 ### Removed
 - Currently unused modules: `fpnew_pipe*`, `fpnew_{f2i,f2f,i2f}_cast`
