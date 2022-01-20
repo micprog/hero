@@ -111,8 +111,8 @@ packages:
     dependencies:
       - common_cells
   icache-intc:
-    revision: 42aee659c80b682ceb7a74ec3f8fd9ba054fea59
-    version: 1.0.0
+    revision: 663c3b6d3c2bf63ff25cda46f33c799c647b3985
+    version: 1.0.1
     source:
       Git: "https://github.com/pulp-platform/icache-intc.git"
     dependencies: []
