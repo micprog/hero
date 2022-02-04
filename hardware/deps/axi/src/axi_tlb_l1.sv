@@ -168,8 +168,7 @@ module axi_tlb_l1 #(
     logic [InpPageNumBytesAligned*8-1:0]  last;
     logic [InpPageNumBytesAligned*8-1:0]  first;
   } entry_padded_t;
-  entry_mask_t entry_read_only;
-  assign entry_read_only = '{
+  localparam entry_mask_t EntryReadOnly = '{
     flags_padding:  '1,
     flags:          '0,
     base_padding:   '1,
@@ -179,10 +178,7 @@ module axi_tlb_l1 #(
     first_padding:  '1,
     first:          '0
   };
-  logic [RegNumBytes-1:0] read_only;
-  for (genvar iEntry = 0; iEntry < NumEntries; iEntry++) begin : gen_read_only
-    assign read_only[iEntry*EntryBytesAligned+:EntryBytesAligned] = entry_read_only;
-  end
+  localparam logic [RegNumBytes-1:0] ReadOnly = {NumEntries{EntryReadOnly}};
   typedef logic [7:0] byte_t;
   byte_t [RegNumBytes-1:0] reg_q;
   axi_lite_regs #(
@@ -191,20 +187,20 @@ module axi_tlb_l1 #(
     .AxiDataWidth   ( CfgAxiDataWidth       ),
     .PrivProtOnly   ( 1'b0                  ),
     .SecuProtOnly   ( 1'b0                  ),
+    .AxiReadOnly    ( ReadOnly              ),
     .RegRstVal      ( '{RegNumBytes{8'h00}} ),
     .req_lite_t     ( axi_lite_req_t        ),
     .resp_lite_t    ( axi_lite_resp_t       )
   ) i_regs (
     .clk_i,
     .rst_ni,
-    .axi_req_i        ( cfg_req_i             ),
-    .axi_resp_o       ( cfg_resp_o            ),
-    .wr_active_o      ( /* unused */          ),
-    .rd_active_o      ( /* unused */          ),
-    .reg_d_i          ( '{RegNumBytes{8'h00}} ),
-    .reg_load_i       ( '{RegNumBytes{1'b0}}  ),
-    .reg_read_only_i  ( read_only             ),
-    .reg_q_o          ( reg_q                 )
+    .axi_req_i    ( cfg_req_i             ),
+    .axi_resp_o   ( cfg_resp_o            ),
+    .wr_active_o  ( /* unused */          ),
+    .rd_active_o  ( /* unused */          ),
+    .reg_d_i      ( '{RegNumBytes{8'h00}} ),
+    .reg_load_i   ( '{RegNumBytes{1'b0}}  ),
+    .reg_q_o      ( reg_q                 )
   );
   entry_padded_t [NumEntries-1:0] entries_padded;
   assign {>>{entries_padded}} = reg_q;

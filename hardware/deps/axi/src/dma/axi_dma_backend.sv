@@ -1,12 +1,11 @@
-// Copyright (c) 2020 ETH Zurich and University of Bologna
-// Copyright and related rights are licensed under the Solderpad Hardware
-// License, Version 0.51 (the "License"); you may not use this file except in
-// compliance with the License.  You may obtain a copy of the License at
-// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
-// or agreed to in writing, software, hardware and materials distributed under
-// this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the
-// specific language governing permissions and limitations under the License.
+// Copyright (c) 2020 ETH Zurich, University of Bologna
+// All rights reserved.
+//
+// This code is under development and not yet released to the public.
+// Until it is released, the code is under the copyright of ETH Zurich and
+// the University of Bologna, and may contain confidential and/or unpublished
+// work. Any reuse/redistribution is strictly forbidden without written
+// permission from ETH Zurich.
 //
 // Thomas Benz <tbenz@ethz.ch>
 
@@ -42,7 +41,8 @@ module axi_dma_backend #(
     ///   the AXI page boundaries.
     /// - `deburst`: if set, the DMA will split all bursts in single transfers
     /// - `serialize`: if set, the DMA will only send AX belonging to a given Arbitrary 1D burst request
-    ///              at a time. This is default behavior to prevent deadlocks.
+    ///              at a time. This is default behavior to prevent deadlocks. Setting `serialize` to
+    ///              zero violates the AXI4+ATOP specification.
     parameter type         burst_req_t = logic,
     /// Give each DMA backend a unique id
     parameter int unsigned DmaIdWidth = -1,
@@ -140,8 +140,8 @@ module axi_dma_backend #(
     initial begin
         assert (DataWidth inside {16, 32, 64, 128, 256, 512, 1024})
             else $fatal(1, "16 <= DataWidth <= 1024");
-        assert (AddrWidth >= 32 & AddrWidth <=   128) /* this is outside AXI4 specs -> be careful! */
-            else $fatal(1, " 32 <= AddrWidth <=   128");
+        assert (AddrWidth >= 32 & AddrWidth <=   128)
+            else $fatal(1, " 8 <= AddrWidth <=   128");
     end
     `endif
     // pragma translate_on

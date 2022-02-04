@@ -188,6 +188,7 @@ module dmac_wrap
     LatencyMode:        axi_pkg::CUT_ALL_PORTS,
     AxiIdWidthSlvPorts:            SlvIdxWidth,
     AxiIdUsedSlvPorts:             SlvIdxWidth,
+    UniqueIds:                            1'b0,
     AxiAddrWidth:               AXI_ADDR_WIDTH,
     AxiDataWidth:               AXI_DATA_WIDTH,
     NoAddrRules:                      NumRules

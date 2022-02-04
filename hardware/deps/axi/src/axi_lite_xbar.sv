@@ -7,8 +7,11 @@
 // this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
-
-// Author: Wolfgang Roenninger <wroennin@ethz.ch>
+//
+// Authors:
+// - Wolfgang Roenninger <wroennin@iis.ee.ethz.ch>
+// - Fabian Schuiki <fschuiki@iis.ee.ethz.ch>
+// - Andreas Kurth <akurth@iis.ee.ethz.ch>
 
 // axi_lite_xbar: Fully-connected AXI4-Lite crossbar.
 // See `doc/axi_lite_xbar.md` for the documentation,
@@ -232,4 +235,71 @@ module axi_lite_xbar #(
       .mst_resp_i  ( mst_ports_resp_i[i] )
     );
   end
+endmodule
+
+`include "axi/assign.svh"
+
+module axi_lite_xbar_intf #(
+  parameter axi_pkg::xbar_cfg_t Cfg = '0,
+  parameter type rule_t             = axi_pkg::xbar_rule_64_t
+) (
+  input  logic                                                    clk_i,
+  input  logic                                                    rst_ni,
+  input  logic                                                    test_i,
+  AXI_LITE.Slave                                                  slv_ports [Cfg.NoSlvPorts-1:0],
+  AXI_LITE.Master                                                 mst_ports [Cfg.NoMstPorts-1:0],
+  input  rule_t [Cfg.NoAddrRules-1:0]                             addr_map_i,
+  input  logic  [Cfg.NoSlvPorts-1:0]                              en_default_mst_port_i,
+  input  logic  [Cfg.NoSlvPorts-1:0][$clog2(Cfg.NoMstPorts)-1:0]  default_mst_port_i
+);
+
+  typedef logic [Cfg.AxiAddrWidth       -1:0] addr_t;
+  typedef logic [Cfg.AxiDataWidth       -1:0] data_t;
+  typedef logic [Cfg.AxiDataWidth/8     -1:0] strb_t;
+  `AXI_LITE_TYPEDEF_AW_CHAN_T(aw_chan_t, addr_t)
+  `AXI_LITE_TYPEDEF_W_CHAN_T(w_chan_t, data_t, strb_t)
+  `AXI_LITE_TYPEDEF_B_CHAN_T(b_chan_t)
+  `AXI_LITE_TYPEDEF_AR_CHAN_T(ar_chan_t, addr_t)
+  `AXI_LITE_TYPEDEF_R_CHAN_T(r_chan_t, data_t)
+  `AXI_LITE_TYPEDEF_REQ_T(axi_req_t, aw_chan_t, w_chan_t, ar_chan_t)
+  `AXI_LITE_TYPEDEF_RESP_T(axi_resp_t, b_chan_t, r_chan_t)
+
+  axi_req_t   [Cfg.NoMstPorts-1:0]  mst_reqs;
+  axi_resp_t  [Cfg.NoMstPorts-1:0]  mst_resps;
+  axi_req_t   [Cfg.NoSlvPorts-1:0]  slv_reqs;
+  axi_resp_t  [Cfg.NoSlvPorts-1:0]  slv_resps;
+
+  for (genvar i = 0; i < Cfg.NoMstPorts; i++) begin : gen_assign_mst
+    `AXI_LITE_ASSIGN_FROM_REQ(mst_ports[i], mst_reqs[i])
+    `AXI_LITE_ASSIGN_TO_RESP(mst_resps[i], mst_ports[i])
+  end
+
+  for (genvar i = 0; i < Cfg.NoSlvPorts; i++) begin : gen_assign_slv
+    `AXI_LITE_ASSIGN_TO_REQ(slv_reqs[i], slv_ports[i])
+    `AXI_LITE_ASSIGN_FROM_RESP(slv_ports[i], slv_resps[i])
+  end
+
+  axi_lite_xbar #(
+    .Cfg  (Cfg),
+    .aw_chan_t  ( aw_chan_t  ),
+    .w_chan_t   ( w_chan_t   ),
+    .b_chan_t   ( b_chan_t   ),
+    .ar_chan_t  ( ar_chan_t  ),
+    .r_chan_t   ( r_chan_t   ),
+    .axi_req_t  ( axi_req_t  ),
+    .axi_resp_t ( axi_resp_t ),
+    .rule_t     ( rule_t     )
+  ) i_xbar (
+    .clk_i,
+    .rst_ni,
+    .test_i,
+    .slv_ports_req_i  (slv_reqs ),
+    .slv_ports_resp_o (slv_resps),
+    .mst_ports_req_o  (mst_reqs ),
+    .mst_ports_resp_i (mst_resps),
+    .addr_map_i,
+    .en_default_mst_port_i,
+    .default_mst_port_i
+  );
+
 endmodule

@@ -9,9 +9,9 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 //
-// Authors: Andreas Kurth       <akurth@iis.ee.ethz.ch>
-//          Florian Zaruba      <zarubaf@iis.ee.ethz.ch>
-//          Wolfgang Roenninger <wroennin@iis.ee.ethz.ch>
+// Authors:
+// - Wolfgang Roenninger <wroennin@iis.ee.ethz.ch>
+// - Andreas Kurth <akurth@iis.ee.ethz.ch>
 
 `include "axi/typedef.svh"
 `include "common_cells/registers.svh"
@@ -64,7 +64,7 @@ module axi_burst_splitter #(
   // Demultiplex between supported and unsupported transactions.
   axi_req_t   act_req,  unsupported_req;
   axi_resp_t  act_resp, unsupported_resp;
-  logic   sel_aw_unsupported, sel_ar_unsupported;
+  logic sel_aw_unsupported, sel_ar_unsupported;
   localparam int unsigned MaxTxns = (MaxReadTxns > MaxWriteTxns) ? MaxReadTxns : MaxWriteTxns;
   axi_demux #(
     .AxiIdWidth   ( IdWidth     ),

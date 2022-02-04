@@ -8,9 +8,11 @@
 // this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
-
-// Author:
-// Andreas Kurth  <akurth@iis.ee.ethz.ch>
+//
+// Authors:
+// - Andreas Kurth <akurth@iis.ee.ethz.ch>
+// - Florian Zaruba <zarubaf@iis.ee.ethz.ch>
+// - Wolfgang Roenninger <wroennin@iis.ee.ethz.ch>
 
 // Macros to define AXI and AXI-Lite Channel and Request/Response Structs
 
@@ -125,7 +127,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// AXI-Lite (4+Prot) Channel and Request/Response Structs
+// AXI4-Lite Channel and Request/Response Structs
 //
 // Usage Example:
 // `AXI_LITE_TYPEDEF_AW_CHAN_T(axi_lite_aw_t, axi_lite_addr_t)
@@ -184,7 +186,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// All AXI-Lite (4+Prot) Channels and Request/Response Structs in One Macro
+// All AXI4-Lite Channels and Request/Response Structs in One Macro
 //
 // This can be used whenever the user is not interested in "precise" control of the naming of the
 // individual channels.

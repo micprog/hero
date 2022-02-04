@@ -149,6 +149,7 @@ module soc_bus #(
     LatencyMode:        axi_pkg::CUT_ALL_PORTS,
     AxiIdWidthSlvPorts: AXI_IW_INP,
     AxiIdUsedSlvPorts:  AXI_IW_INP,
+    UniqueIds:          1'b0,
     AxiAddrWidth:       AXI_AW,
     AxiDataWidth:       AXI_DW,
     NoAddrRules:        NumRules

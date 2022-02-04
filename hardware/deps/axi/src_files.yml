@@ -1,6 +1,10 @@
 axi:
+  vlog_opts: [
+    -L common_cells_lib
+  ]
   incdirs:
     - include
+    - ../../common_cells/include
   files:
     # Source files grouped in levels. Files in level 0 have no dependencies on files in this
     # package. Files in level 1 only depend on files in level 0, files in level 2 on files in
@@ -12,12 +16,14 @@ axi:
     # Level 2
     - src/axi_atop_filter.sv
     - src/axi_burst_splitter.sv
-    - src/axi_cdc.sv
+    - src/axi_cdc_dst.sv
+    - src/axi_cdc_src.sv
     - src/axi_cut.sv
     - src/axi_delayer.sv
     - src/axi_demux.sv
     - src/axi_dw_downsizer.sv
     - src/axi_dw_upsizer.sv
+    - src/axi_id_remap.sv
     - src/axi_id_prepend.sv
     - src/axi_isolate.sv
     - src/axi_join.sv
@@ -32,16 +38,22 @@ axi:
     - src/axi_mux.sv
     - src/axi_serializer.sv
     # Level 3
+    - src/axi_cdc.sv
     - src/axi_err_slv.sv
     - src/axi_dw_converter.sv
+    - src/axi_id_serialize.sv
     - src/axi_multicut.sv
+    - src/axi_tlb_l1.sv
     - src/axi_to_axi_lite.sv
     # Level 4
+    - src/axi_iw_converter.sv
     - src/axi_lite_xbar.sv
+    - src/axi_tlb.sv
     - src/axi_xbar.sv
 
 axi_sim:
   files:
+    - src/axi_sim_mem.sv
     - src/axi_test.sv
   flags:
     - skip_synthesis

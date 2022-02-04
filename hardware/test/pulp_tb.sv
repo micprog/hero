@@ -150,6 +150,7 @@ module pulp_tb #(
     LatencyMode:        axi_pkg::NO_LATENCY,
     AxiIdWidthSlvPorts: AXI_IW,
     AxiIdUsedSlvPorts:  AXI_IW,
+    UniqueIds:          1'b0,
     AxiAddrWidth:       pulp_pkg::AXI_AW,
     AxiDataWidth:       AXI_DW,
     NoAddrRules:        NumRules
@@ -198,13 +199,13 @@ module pulp_tb #(
 
   // Emulate infinite memory with AXI slave port.
   axi_sim_mem_intf #(
-    .AddrWidth          (pulp_pkg::AXI_AW),
-    .DataWidth          (AXI_DW),
-    .IdWidth            (AXI_IW + 1),
-    .UserWidth          (pulp_pkg::AXI_UW),
-    .WarnUninitialized  (1'b0),
-    .ApplDelay          (CLK_PERIOD / 5 * 1),
-    .AcqDelay           (CLK_PERIOD / 5 * 4)
+    .AXI_ADDR_WIDTH      (pulp_pkg::AXI_AW),
+    .AXI_DATA_WIDTH      (AXI_DW),
+    .AXI_ID_WIDTH        (AXI_IW + 1),
+    .AXI_USER_WIDTH      (pulp_pkg::AXI_UW),
+    .WARN_UNINITIALIZED  (1'b0),
+    .APPL_DELAY          (CLK_PERIOD / 5 * 1),
+    .ACQ_DELAY           (CLK_PERIOD / 5 * 4)
   ) i_sim_mem (
     .clk_i    (clk),
     .rst_ni   (rst_n),

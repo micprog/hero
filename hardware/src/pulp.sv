@@ -483,6 +483,7 @@ module pulp import pulp_pkg::*; #(
     LatencyMode: axi_pkg::CUT_SLV_AX,
     AxiIdWidthSlvPorts: 1, // actually no ID at all for AXI-Lite
     AxiIdUsedSlvPorts: 1, // actually no ID at all for AXI-Lite
+    UniqueIds: 1'b0,
     AxiAddrWidth: AXI_LITE_AW,
     AxiDataWidth: AXI_LITE_DW,
     NoAddrRules: 2
