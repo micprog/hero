@@ -192,6 +192,7 @@ module axi_riscv_amos #(
     // States
     logic                               adapter_ready;
     logic                               transaction_collision;
+    logic                               atop_r_resp_d,  atop_r_resp_q;
     logic                               force_wf_d,     force_wf_q;
     logic                               start_wf_d,     start_wf_q;
     logic                               b_resp_valid;
@@ -266,9 +267,11 @@ module axi_riscv_amos #(
 
     always_comb begin : calc_atop_valid
         atop_valid_d = atop_valid_q;
+        atop_r_resp_d = atop_r_resp_q;
         if (adapter_ready) begin
             atop_valid_d = NONE;
-            if (slv_aw_valid_i && slv_aw_atop_i) begin
+            atop_r_resp_d = 1'b0;
+            if (slv_aw_valid_i && (slv_aw_atop_i[5:4] != axi_pkg::ATOP_NONE)) begin
                 // Default is invalid request
                 atop_valid_d = INVALID;
                 // Valid load operation
@@ -289,6 +292,10 @@ module axi_riscv_amos #(
                 if (slv_aw_size_i > $clog2(RISCV_WORD_WIDTH/8)) begin
                     atop_valid_d = INVALID;
                 end
+                // Do we have to issue a r_resp?
+                if (slv_aw_atop_i[axi_pkg::ATOP_R_RESP]) begin
+                    atop_r_resp_d = 1'b1;
+                end
             end
         end
     end
@@ -296,8 +303,10 @@ module axi_riscv_amos #(
     always_ff @(posedge clk_i or negedge rst_ni) begin : proc_atop_valid
         if(~rst_ni) begin
             atop_valid_q <= NONE;
+            atop_r_resp_q <= 1'b0;
         end else begin
             atop_valid_q <= atop_valid_d;
+            atop_r_resp_q <= atop_r_resp_d;
         end
     end
 
@@ -337,7 +346,7 @@ module axi_riscv_amos #(
         aw_state_d      = aw_state_q;
 
         // Default control: Block AW channel if...
-        if (slv_aw_valid_i && slv_aw_atop_i) begin
+        if (slv_aw_valid_i && (slv_aw_atop_i[5:4] != axi_pkg::ATOP_NONE)) begin
             // Block if atomic request
             mst_aw_valid_o = 1'b0;
             slv_aw_ready_o = 1'b0;
@@ -345,8 +354,8 @@ module axi_riscv_amos #(
             // Block if counter is overflowing
             mst_aw_valid_o = 1'b0;
             slv_aw_ready_o = 1'b0;
-        end else if (force_wf_q && aw_free) begin // TODO: no not instantly block the channel but only if its free
-            // Block if the adapter is in force wait-free mode
+        end else if (force_wf_q && aw_free) begin
+            // Block if the adapter is in force wait-free mode and the AW is free
             mst_aw_valid_o = 1'b0;
             slv_aw_ready_o = 1'b0;
         end else if (slv_aw_valid_i && transaction_collision && !adapter_ready) begin
@@ -368,7 +377,7 @@ module axi_riscv_amos #(
 
             FEEDTHROUGH_AW: begin
                 // Feedthrough slave to master until atomic operation is detected
-                if (slv_aw_valid_i && slv_aw_atop_i && adapter_ready) begin
+                if (slv_aw_valid_i && (slv_aw_atop_i[5:4] != axi_pkg::ATOP_NONE) && adapter_ready) begin
                     // Acknowledge atomic transaction
                     slv_aw_ready_o = 1'b1;
                     // Remember request
@@ -406,7 +415,7 @@ module axi_riscv_amos #(
                     mst_aw_len_o    = 8'h00;
                     mst_aw_id_o     = id_q;
                     mst_aw_size_o   = size_q;
-                    mst_aw_burst_o  = 2'b00;
+                    mst_aw_burst_o  = axi_pkg::BURST_INCR;
                     mst_aw_lock_o   = ~force_wf_q;
                     mst_aw_cache_o  = cache_q;
                     mst_aw_prot_o   = prot_q;
@@ -617,7 +626,7 @@ module axi_riscv_amos #(
                             slv_b_valid_o = 1'b1;
                             slv_b_id_o    = slv_aw_id_i;
                             slv_b_resp_o  = axi_pkg::RESP_SLVERR;
-                            slv_b_user_o  = '0;
+                            slv_b_user_o  = slv_aw_user_i;
                             if (!slv_b_ready_i) begin
                                 b_state_d = SEND_B;
                             end
@@ -636,7 +645,7 @@ module axi_riscv_amos #(
                     slv_b_valid_o = 1'b1;
                     slv_b_id_o    = id_q;
                     slv_b_resp_o  = axi_pkg::RESP_SLVERR;
-                    slv_b_user_o  = '0;
+                    slv_b_user_o  = aw_user_q;
                     if (slv_b_ready_i) begin
                         b_state_d = FEEDTHROUGH_B;
                     end else begin
@@ -791,7 +800,7 @@ module axi_riscv_amos #(
                         mst_ar_id_o     = slv_aw_id_i;
                         mst_ar_len_o    = 8'h00;
                         mst_ar_size_o   = slv_aw_size_i;
-                        mst_ar_burst_o  = 2'b00;
+                        mst_ar_burst_o  = axi_pkg::BURST_INCR;
                         mst_ar_lock_o   = ~force_wf_q;
                         mst_ar_cache_o  = slv_aw_cache_i;
                         mst_ar_prot_o   = slv_aw_prot_i;
@@ -822,7 +831,7 @@ module axi_riscv_amos #(
                     mst_ar_id_o     = id_q;
                     mst_ar_len_o    = 8'h00;
                     mst_ar_size_o   = size_q;
-                    mst_ar_burst_o  = 2'b00;
+                    mst_ar_burst_o  = axi_pkg::BURST_INCR;
                     mst_ar_lock_o   = ~force_wf_q;
                     mst_ar_cache_o  = cache_q;
                     mst_ar_prot_o   = prot_q;
@@ -878,7 +887,7 @@ module axi_riscv_amos #(
                     if (atop_valid_d == LOAD || atop_valid_d == STORE) begin
                         // Wait for R response to read data
                         r_state_d = WAIT_DATA_R;
-                    end else if (atop_valid_d == INVALID) begin
+                    end else if (atop_valid_d == INVALID && atop_r_resp_d) begin
                         // Send R response once channel is free
                         if (r_free) begin
                             // Acquire the R channel
@@ -890,7 +899,7 @@ module axi_riscv_amos #(
                             slv_r_id_o    = slv_aw_id_i;
                             slv_r_last_o  = 1'b1;
                             slv_r_resp_o  = axi_pkg::RESP_SLVERR;
-                            slv_r_user_o  = '0;
+                            slv_r_user_o  = slv_aw_user_i;
                             if (!slv_r_ready_i) begin
                                 // Hold R response
                                 r_state_d = SEND_R;
@@ -939,10 +948,10 @@ module axi_riscv_amos #(
                     slv_r_last_o  = 1'b1;
                     slv_r_resp_o  = r_resp_q;
                     slv_r_user_o  = r_user_q;
-                    if (atop_valid_q == INVALID) begin
+                    if (atop_valid_q == INVALID && atop_r_resp_q) begin
                         slv_r_data_o = '0;
                         slv_r_resp_o = axi_pkg::RESP_SLVERR;
-                        slv_r_user_o = '0;
+                        slv_r_user_o = aw_user_q;
                     end
                     if (slv_r_ready_i) begin
                         r_state_d = FEEDTHROUGH_R;

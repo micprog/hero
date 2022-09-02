@@ -6,7 +6,7 @@ dependencies:
   axi2apb: { git: "https://github.com/pulp-platform/axi2apb.git", rev: atop }
   axi: { git: "https://github.com/pulp-platform/axi.git", version: 0.31.1 }
   axi2mem: { git: "https://github.com/pulp-platform/axi2mem.git", rev: undefined } # TODO: upstream
-  axi_riscv_atomics: { git: "https://github.com/pulp-platform/axi_riscv_atomics.git", rev: fix-ordering }
+  axi_riscv_atomics: { git: "https://github.com/pulp-platform/axi_riscv_atomics.git", version: 0.5.0 }
   axi_slice_dc: { git: "https://github.com/pulp-platform/axi_slice_dc.git", rev: atomics }
   common_verification: { git: "https://github.com/pulp-platform/common_verification.git", version: 0.2.1 }
   pulp_cluster: { git: "https://github.com/pulp-platform/pulp_cluster.git", rev: atomics }
