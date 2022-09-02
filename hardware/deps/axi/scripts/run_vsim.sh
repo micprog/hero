@@ -72,6 +72,14 @@ exec_test() {
                 done
             done
             ;;
+        axi_fifo)
+            for DEPTH in 0 1 16; do
+                for FALL_THROUGH in 0 1; do
+                    call_vsim tb_axi_fifo -gDepth=$DEPTH \
+                            -gFallThrough=$FALL_THROUGH
+                done
+            done
+            ;;
         axi_iw_converter)
             for SLV_PORT_IW in 1 2 3 4 8; do
                 MAX_SLV_PORT_IDS=$((2**SLV_PORT_IW))
@@ -169,6 +177,27 @@ exec_test() {
                                         -gTbEnAtop=$Atop -gTbEnExcl=$Exclusive \
                                         -gTbUniqueIds=$UniqueIds
                             done
+                        done
+                    done
+                done
+            done
+            ;;
+        axi_to_mem_banked)
+            for MEM_LAT in 1 2; do
+                for BANK_FACTOR in 1 2; do
+                    for NUM_BANKS in 1 2 ; do
+                        for AXI_DATA_WIDTH in 64 256 ; do
+                            ACT_BANKS=$((2*$BANK_FACTOR*$NUM_BANKS))
+                            MEM_DATA_WIDTH=$(($AXI_DATA_WIDTH/$NUM_BANKS))
+                            call_vsim tb_axi_to_mem_banked \
+                                -voptargs="+acc +cover=bcesfx" \
+                                -gTbAxiDataWidth=$AXI_DATA_WIDTH \
+                                -gTbNumWords=2048 \
+                                -gTbNumBanks=$ACT_BANKS \
+                                -gTbMemDataWidth=$MEM_DATA_WIDTH \
+                                -gTbMemLatency=$MEM_LAT \
+                                -gTbNumWrites=2000 \
+                                -gTbNumReads=2000
                         done
                     done
                 done

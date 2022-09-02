@@ -1,6 +1,6 @@
 CAPI=2:
 
-name : pulp-platform.org::axi:0.32.1-dev
+name : pulp-platform.org::axi:0.37.0
 
 filesets:
   rtl:
@@ -24,6 +24,7 @@ filesets:
       - src/axi_demux.sv
       - src/axi_dw_downsizer.sv
       - src/axi_dw_upsizer.sv
+      - src/axi_fifo.sv
       - src/axi_id_remap.sv
       - src/axi_id_prepend.sv
       - src/axi_isolate.sv
@@ -38,6 +39,8 @@ filesets:
       - src/axi_modify_address.sv
       - src/axi_mux.sv
       - src/axi_serializer.sv
+      - src/axi_throttle.sv
+      - src/axi_to_mem.sv
       # Level 3
       - src/axi_cdc.sv
       - src/axi_err_slv.sv
@@ -45,13 +48,16 @@ filesets:
       - src/axi_id_serialize.sv
       - src/axi_multicut.sv
       - src/axi_to_axi_lite.sv
+      - src/axi_to_mem_banked.sv
+      - src/axi_to_mem_interleaved.sv
+      - src/axi_to_mem_split.sv
       # Level 4
       - src/axi_iw_converter.sv
       - src/axi_lite_xbar.sv
       - src/axi_xbar.sv
     file_type : systemVerilogSource
     depend :
-      - ">=pulp-platform.org::common_cells:1.21.0"
+      - ">=pulp-platform.org::common_cells:1.26.0"
 
 generators:
   axi_intercon_gen:
