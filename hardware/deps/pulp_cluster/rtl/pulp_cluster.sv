@@ -583,7 +583,7 @@ module pulp_cluster import pulp_cluster_package::*; import apu_package::*; impor
     .data_o   (ext_tcdm_req_buf.aw)
   );
 
-  axi2mem #(
+  axi_to_mem #(
     .axi_req_t  ( axi_req_t           ),
     .axi_resp_t ( axi_resp_t          ),
     .AddrWidth  ( 32                  ),

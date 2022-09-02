@@ -251,7 +251,7 @@ module dmac_wrap
 
   logic tcdm_master_we_0, tcdm_master_we_1, tcdm_master_we_2, tcdm_master_we_3;
 
-  axi2mem #(
+  axi_to_mem #(
     .axi_req_t   ( mem_req_t           ),
     .axi_resp_t  ( mst_resp_t          ),
     .AddrWidth   ( ADDR_WIDTH          ),
@@ -276,7 +276,7 @@ module dmac_wrap
     .mem_rdata_i  ( { tcdm_master[0].r_rdata, tcdm_master[1].r_rdata } )
   );
 
-  axi2mem #(
+  axi_to_mem #(
     .axi_req_t   ( mem_req_t           ),
     .axi_resp_t  ( mst_resp_t          ),
     .AddrWidth   ( ADDR_WIDTH          ),

@@ -34,14 +34,14 @@ module l2_mem #(
   arr_data_t  wdata, rdata;
   arr_strb_t  be;
 
-  axi2mem_wrap #(
-    .AddrWidth  (AXI_AW),
-    .DataWidth  (AXI_DW),
-    .IdWidth    (AXI_IW),
-    .UserWidth  (AXI_UW),
-    .NumBanks   (1),
-    .BufDepth   (1)
-  ) i_axi2mem (
+  axi_to_mem_intf #(
+    .ADDR_WIDTH( AXI_AW ),
+    .DATA_WIDTH( AXI_DW ),
+    .ID_WIDTH  ( AXI_IW ),
+    .USER_WIDTH( AXI_UW ),
+    .NUM_BANKS ( 1      ),
+    .BUF_DEPTH ( 1      )
+  ) i_axi_to_mem (
     .clk_i,
     .rst_ni,
     .busy_o       (/* unused */),
