@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.com/pulp-platform/common_cells.svg?branch=master)](https://travis-ci.com/pulp-platform/common_cells)
+[![Build Status](https://github.com/pulp-platform/common_cells/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/pulp-platform/common_cells/actions/workflows/ci.yml?query=branch%3Amaster)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/pulp-platform/common_cells?color=blue&label=current&sort=semver)](CHANGELOG.md)
 [![SHL-0.51 license](https://img.shields.io/badge/license-SHL--0.51-green)](LICENSE)
 
 # Common Cells Repository
 
-Maintainer: Florian Zaruba <zarubaf@iis.ee.ethz.ch>
+Maintainer: Nils Wistoff <nwistoff@iis.ee.ethz.ch>
 
 This repository contains commonly used cells and headers for use in various projects.
 
@@ -15,32 +15,38 @@ Please note that cells with status *deprecated* are not to be used for new desig
 
 ### Clocks and Resets
 
-| Name                    | Description                                         | Status       | Superseded By |
-| ----------------------- | --------------------------------------------------- | ------------ | ------------- |
-| `clk_div`               | Clock divider with integer divisor                  | active       |               |
-| `clock_divider`         | Clock divider with configuration registers          | *deprecated* | `clk_div`     |
-| `clock_divider_counter` | Clock divider using a counter                       | *deprecated* | `clk_div`     |
-| `rstgen`                | Reset synchronizer                                  | active       |               |
-| `rstgen_bypass`         | Reset synchronizer with dedicated test reset bypass | active       |               |
+| Name                    | Description                                                                          | Status       | Superseded By |
+| ----------------------- | ------------------------------------------------------------------------------------ | ------------ | ------------- |
+| `clk_int_div`           | Arbitrary integer clock divier with config interface and 50% output clock duty cycle | active       |               |
+| `clk_div`               | Clock divider with integer divisor                                                   | *deprecated* | `clk_int_div` |
+| `clock_divider`         | Clock divider with configuration registers                                           | *deprecated* | `clk_int_div` |
+| `clock_divider_counter` | Clock divider using a counter                                                        | *deprecated* | `clk_int_div` |
+| `rstgen`                | Reset synchronizer                                                                   | active       |               |
+| `rstgen_bypass`         | Reset synchronizer with dedicated test reset bypass                                  | active       |               |
 
 ### Clock Domains and Asynchronous Crossings
 
-| Name                           | Description                                                                      | Status       | Superseded By |
-|--------------------------------|----------------------------------------------------------------------------------|--------------|---------------|
-| `cdc_2phase`                   | Clock domain crossing using two-phase handshake, with ready/valid interface      | active       |               |
-| `cdc_fifo_2phase`              | Clock domain crossing FIFO using two-phase handshake, with ready/valid interface | active       |               |
-| `cdc_fifo_gray`                | Clock domain crossing FIFO using a gray-counter, with ready/valid interface      | active       |               |
-| `edge_detect`                  | Rising/falling edge detector                                                     | active       |               |
-| `edge_propagator`              | **ANTONIO ADD DESCRIPTION**                                                      | active       |               |
-| `edge_propagator_rx`           | **ANTONIO ADD DESCRIPTION**                                                      | active       |               |
-| `edge_propagator_tx`           | **ANTONIO ADD DESCRIPTION**                                                      | active       |               |
-| `isochronous_spill_register`   | Isochronous clock domain crossing and full handshake (like `spill_register`)     | active       |               |
-| `isochronous_4phase_handshake` | Isochronous four-phase handshake.                                                | active       |               |
-| `pulp_sync`                    | Serial line synchronizer                                                         | *deprecated* | `sync`        |
-| `pulp_sync_wedge`              | Serial line synchronizer with edge detector                                      | *deprecated* | `sync_wedge`  |
-| `serial_deglitch`              | Serial line deglitcher                                                           | active       |               |
-| `sync`                         | Serial line synchronizer                                                         | active       |               |
-| `sync_wedge`                   | Serial line synchronizer with edge detector                                      | active       |               |
+| Name                           | Description                                                                                   | Status       | Superseded By |
+|--------------------------------|-----------------------------------------------------------------------------------------------|--------------|---------------|
+| `cdc_4phase`                   | Clock domain crossing using 4-phase handshake, with ready/valid interface                     | active       |               |
+| `cdc_2phase`                   | Clock domain crossing using two-phase handshake, with ready/valid interface                   | active       |               |
+| `cdc_2phase_clearable`         | Identical to `cdc_2phase` but supports one-sided async/sync resetting of either src or dst    | active       |               |
+| `cdc_fifo_2phase`              | Clock domain crossing FIFO using two-phase handshake, with ready/valid interface              | active       |               |
+| `cdc_fifo_gray`                | Clock domain crossing FIFO using a gray-counter, with ready/valid interface                   | active       |               |
+| `cdc_fifo_gray_clearable`      | Identical to `cdc_fifo_gray` but supports one-sided async/sync resetting of either src or dst | active       |               |
+| `cdc_reset_ctrlr`              | Lock-step reset sequencer accross clock domains (internally used by clearable CDCs)           | active       |               |
+| `edge_detect`                  | Rising/falling edge detector                                                                  | active       |               |
+| `edge_propagator`              | Propagates a single-cycle pulse across an asynchronous clock domain crossing                  | active       |               |
+| `edge_propagator_ack`          | `edge_propagator` with sender-synchronous acknowledge pin (flags received pulse)              | active       |               |
+| `edge_propagator_rx`           | Receive slice of `edge_propagator`, requires only the receiver clock                          | active       |               |
+| `edge_propagator_tx`           | Transmit slice of `edge_propagator`, requires only the sender clock                           | active       |               |
+| `isochronous_spill_register`   | Isochronous clock domain crossing and full handshake (like `spill_register`)                  | active       |               |
+| `isochronous_4phase_handshake` | Isochronous four-phase handshake.                                                             | active       |               |
+| `pulp_sync`                    | Serial line synchronizer                                                                      | *deprecated* | `sync`        |
+| `pulp_sync_wedge`              | Serial line synchronizer with edge detector                                                   | *deprecated* | `sync_wedge`  |
+| `serial_deglitch`              | Serial line deglitcher                                                                        | active       |               |
+| `sync`                         | Serial line synchronizer                                                                      | active       |               |
+| `sync_wedge`                   | Serial line synchronizer with edge detector                                                   | active       |               |
 
 ### Counters and Shift Registers
 
@@ -59,7 +65,8 @@ Please note that cells with status *deprecated* are not to be used for new desig
 
 | Name                       | Description                                                                                               | Status       | Superseded By |
 | -------------------------- | --------------------------------------------------------------------------------------------------------- | ------------ | ------------- |
-| `addr_decode   `           | Address map decoder                                                                                       | active       |               |
+| `addr_decode`              | Address map decoder                                                                                       | active       |               |
+| `addr_decode_napot`        | Address map decoder using naturally-aligned power of two (NAPOT) regions                                  | active       |               |
 | `ecc_decode`               | SECDED Decoder (Single Error Correction, Double Error Detection)                                          | active       |               |
 | `ecc_encode`               | SECDED Encoder (Single Error Correction, Double Error Detection)                                          | active       |               |
 | `binary_to_gray`           | Binary to gray code converter                                                                             | active       |               |
@@ -87,23 +94,25 @@ Please note that cells with status *deprecated* are not to be used for new desig
 | `stream_to_mem`            | Use memories without flow control for output data in streams.                                             | active       |               |
 | `stream_xbar`              | Fully connected crossbar with ready/valid interface.                                                      | active       |               |
 | `stream_omega_net`         | One-way stream omega-net with ready/valid interface. Isomorphic to a butterfly.                           | active       |               |
+| `stream_throttle`          | Restrict the number of outstanding transfers in a stream.                                                 | active       |               |
 | `sub_per_hash`             | Substitution-permutation hash function                                                                    | active       |               |
 | `popcount`                 | Combinatorial popcount (hamming weight)                                                                   | active       |               |
 
 ### Data Structures
 
-| Name               | Description                                     | Status       | Superseded By |
-| ------------------ | ----------------------------------------------- | ------------ | ------------- |
-| `cb_filter`        | Counting-Bloom-Filter with combinational lookup | active       |               |
-| `fifo`             | FIFO register with upper threshold              | *deprecated* | `fifo_v3`     |
-| `fifo_v2`          | FIFO register with upper and lower threshold    | *deprecated* | `fifo_v3`     |
-| `fifo_v3`          | FIFO register with generic fill counts          | active       |               |
-| `stream_fifo`      | FIFO register with ready/valid interface        | active       |               |
-| `generic_fifo`     | FIFO register without thresholds                | *deprecated* | `fifo_v3`     |
-| `generic_fifo_adv` | FIFO register without thresholds                | *deprecated* | `fifo_v3`     |
-| `sram`             | SRAM behavioral model                           | active       |               |
-| `plru_tree`        | Pseudo least recently used tree                 | active       |               |
-| `unread`           | Empty module to sink unconnected outputs into   | active       |               |
+| Name                       | Description                                                      | Status       | Superseded By |
+| -------------------------- | ---------------------------------------------------------------- | ------------ | ------------- |
+| `cb_filter`                | Counting-Bloom-Filter with combinational lookup                  | active       |               |
+| `fifo`                     | FIFO register with upper threshold                               | *deprecated* | `fifo_v3`     |
+| `fifo_v2`                  | FIFO register with upper and lower threshold                     | *deprecated* | `fifo_v3`     |
+| `fifo_v3`                  | FIFO register with generic fill counts                           | active       |               |
+| `stream_fifo`              | FIFO register with ready/valid interface                         | active       |               |
+| `stream_fifo_optimal_wrap` | Wrapper that optimally selects either a spill register or a FIFO | active       |               |
+| `generic_fifo`             | FIFO register without thresholds                                 | *deprecated* | `fifo_v3`     |
+| `generic_fifo_adv`         | FIFO register without thresholds                                 | *deprecated* | `fifo_v3`     |
+| `sram`                     | SRAM behavioral model                                            | active       |               |
+| `plru_tree`                | Pseudo least recently used tree                                  | active       |               |
+| `unread`                   | Empty module to sink unconnected outputs into                    | active       |               |
 
 
 ## Header Contents
