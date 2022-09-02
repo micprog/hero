@@ -1,0 +1,16 @@
+package:
+  name: axi_tlb
+  authors: [ "Andreas Kurth <akurth@iis.ee.ethz.ch>" ]
+
+dependencies:
+  common_cells: { git: "https://github.com/pulp-platform/common_cells.git", version: 1.26.0 }
+  axi: { git: "https://github.com/pulp-platform/axi.git", version: 0.37.0 }
+
+sources:
+  - src/axi_tlb_l1.sv
+  # Level 1
+  - src/axi_tlb.sv
+
+  - target: test
+    files:
+      - test/tb_axi_tlb.sv
