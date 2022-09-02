@@ -745,6 +745,28 @@ module pulp_cluster import pulp_cluster_package::*; import apu_package::*; impor
     .TCDM_arb_policy_i      ( s_TCDM_arb_policy                   )
   );
 
+  hci_core_intf #(
+    .DW ( DATA_WIDTH ),
+    .AW ( ADDR_WIDTH ),
+    .OW ( 1 )
+  ) s_dma_hci_xbar_bus [NB_DMAS-1:0] (
+    .clk ( clk_cluster )
+  );
+
+  for (genvar i = 0; i < NB_DMAS; i++) begin : gen_assign_hci_dma
+    assign s_dma_xbar_bus[i].req   = s_dma_hci_xbar_bus[i].req;
+    assign s_dma_xbar_bus[i].add   = s_dma_hci_xbar_bus[i].add;
+    assign s_dma_xbar_bus[i].wdata = s_dma_hci_xbar_bus[i].data;
+    assign s_dma_xbar_bus[i].be    = s_dma_hci_xbar_bus[i].be;
+    assign s_dma_xbar_bus[i].wen   = s_dma_hci_xbar_bus[i].wen;
+
+    assign s_dma_hci_xbar_bus[i].gnt     = s_dma_xbar_bus[i].gnt;
+    assign s_dma_hci_xbar_bus[i].r_data  = s_dma_xbar_bus[i].r_rdata;
+    assign s_dma_hci_xbar_bus[i].r_valid = s_dma_xbar_bus[i].r_valid;
+    assign s_dma_hci_xbar_bus[i].r_opc   = s_dma_xbar_bus[i].r_opc;
+    assign s_dma_hci_xbar_bus[i].r_user  = '0;
+  end
+
   dmac_wrap #(
     .NB_CORES           ( NB_CORES           ),
     .AXI_ADDR_WIDTH     ( AXI_ADDR_WIDTH     ),
@@ -752,17 +774,20 @@ module pulp_cluster import pulp_cluster_package::*; import apu_package::*; impor
     .AXI_ID_WIDTH       ( AXI_ID_IN_WIDTH    ),
     .AXI_USER_WIDTH     ( AXI_USER_WIDTH     ),
     .PE_ID_WIDTH        ( NB_CORES + 1       ),
+    .NB_PE_PORTS        ( 1                  ),
     .DATA_WIDTH         ( DATA_WIDTH         ),
     .ADDR_WIDTH         ( ADDR_WIDTH         ),
     .BE_WIDTH           ( BE_WIDTH           ),
-    .NUM_STREAMS        ( NB_DMA_STREAMS     )
+    .NUM_STREAMS        ( NB_DMA_STREAMS     ),
+    .TCDM_SIZE          ( TCDM_SIZE          ),
+    .TwoDMidend         ( 1                  )
   ) dmac_wrap_i (
     .clk_i          ( clk_cluster        ),
     .rst_ni         ( rst_ni             ),
     .test_mode_i    ( test_mode_i        ),
     .ctrl_slave     ( s_core_dmactrl_bus ),
-    .pe_ctrl_slave  ( s_periph_dma_bus   ),
-    .tcdm_master    ( s_dma_xbar_bus     ),
+    .pe_ctrl_slave  ( {s_periph_dma_bus} ),
+    .tcdm_master    ( s_dma_hci_xbar_bus ),
     .ext_master     ( s_dma_ext_bus      ),
     .term_event_o   ( s_dma_event        ),
     .term_irq_o     ( s_dma_irq          ),

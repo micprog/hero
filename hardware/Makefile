@@ -7,7 +7,7 @@ vsim/compile.tcl: bender
 	echo 'set ROOT [file normalize [file dirname [info script]]/..]' > $@
 	./bender script vsim \
 		--vlog-arg="$(VLOG_ARGS)" \
-		-t rtl -t test \
+		-t rtl -t test -t pulp \
 		| grep -v "set ROOT" >> $@
 
 bender: Makefile
